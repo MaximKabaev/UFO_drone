@@ -6,7 +6,7 @@ DRONE_MASS = 1890 #kg
 DELTA_T = 0.1 #s
 FUEL_CONSUMPTION = 0.6831 #liters
 DIAMETER = 10 #m
-AREA = 1 #m
+AREA = 100 #m #change to 1
 
 THRUST_DURATION = 15 #s
 
@@ -26,8 +26,8 @@ class Drone():
         self.delta_y_vel = 0
         self.x_pos = 0
         self.y_pos = 0
-        self.delta_delta_x_pos = 0
-        self.delta_delta_y_pos = 0
+        self.delta_x_pos = 0
+        self.delta_y_pos = 0
 
     def thrust(self):
         thrust = 1000 #N
@@ -61,7 +61,6 @@ class Drone():
 
     def start_x(self):
         self.delta_x_vel = 0
-        self.delta_y_vel = 0
         
         if self.thrust_duration > 0:
             self.thrust()
@@ -71,24 +70,36 @@ class Drone():
 
         self.drag()
         self.x_vel += self.delta_x_vel
+        self.delta_x_pos = self.x_vel * self.delta_t
+        self.x_pos += self.delta_x_pos
 
-        
+
+
+print("START")
 
 velocities = []
 times = []
+positions = []
 
 drone = Drone(DRONE_MASS, DELTA_T, DIAMETER, AREA, THRUST_DURATION)
 
 for t in range(0, int(30/DELTA_T)):
     drone.start_x()
     velocities.append(drone.x_vel)
+    positions.append(drone.x_pos)
     TIME += DELTA_T
     times.append(TIME)
     print(drone.x_vel)
 
+plt.subplot(121)
 plt.plot(times, velocities)
-plt.xlabel('x - time')
-plt.ylabel('y - velocity')
+plt.xlabel('Ttime (s)')
+plt.ylabel('Velocity (m/s)')
+
+plt.subplot(122)
+plt.plot(times, positions)
+plt.xlabel('Time (s)')
+plt.ylabel('X-Position (m)')
 plt.show()
 
 # x-axis
